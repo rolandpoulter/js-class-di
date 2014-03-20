@@ -1,0 +1,13 @@
+{
+	"name": "dass",
+	"main": "./class.js",
+	"author": "rolandpoulter",
+	"version": "0.0.0",
+	"keywords": [],
+	"homepage": "https://github.com/rolandpoulter/js-class-di",
+	"repository": {"type": "git", "url": "git://github.com/rolandpoulter/js-class-di"},
+	"description" : "",
+	"contributors": [],
+	"dependencies": {},
+	"scripts": {"test": "node ./test"}
+}

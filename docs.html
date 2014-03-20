@@ -1,0 +1,647 @@
+<h1 id="new-class-definition-traits-">new Class(definition, traits...);</h1>
+<ol>
+<li>definition - String, Function, Object.</li>
+<li>traits... - String, Function, Object.</li>
+</ol>
+<p>Constructs JavaScript classes that provide easy type introspection and remove the need for boilerplate code.
+Also has inheritance and depedency injection built in. Aims to be a lightweight, and simple implementation that
+can be easily monkey patched if needed.</p>
+<p>Returns a Function.</p>
+<pre><code class="lang-javascript">
+
+&quot;use strict&quot;;
+
+function Class () {
+
+    return this.initialize.apply(this, arguments);
+
+}
+</code></pre>
+<h2 id="class-construct-constructor-traits-">Class.construct(constructor, traits...);</h2>
+<ol>
+<li>constructor - String, Function, Object.</li>
+<li>traits... - String, Function, Object.</li>
+</ol>
+<p>Returns a Function.</p>
+<pre><code class="lang-javascript">
+
+Class.construct = function (constructor) {
+
+    var class_constructor = Class.helpers.get_class_constructor(this);
+
+    constructor = class_constructor.register(constructor);
+
+    Object.keys(class_constructor.prototype).forEach(function (method_name) {
+
+        constructor[method_name] = class_constructor.prototype[method_name];
+
+    });
+
+    constructor.include.apply(constructor, [].slice.call(arguments, 1));
+
+    class_constructor.create(constructor, constructor);
+
+    constructor.create(constructor.prototype, constructor);
+
+    if (class_constructor !== constructor) {
+        Object.defineProperty(constructor, &#39;constructor&#39;, {value: class_constructor});
+    }
+
+    Object.defineProperty(constructor, &#39;class_constructor&#39;, {value: class_constructor});
+
+    return constructor;
+
+};
+</code></pre>
+<h2 id="class-helpers-">Class.helpers;</h2>
+<p>A home for helper methods that do not need to be class or instance methods.</p>
+<pre><code class="lang-javascript">
+
+Class.helpers = {};
+</code></pre>
+<h3 id="class-helpers-get_traits-constructor-">Class.helpers.get_traits(constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.get_traits = function (constructor) {
+
+    if (!constructor.prototype) {
+        constructor = constructor.constructor;
+    }
+
+    if (!constructor.traits) {
+        var class_constructor = Class.helpers.get_class_constructor(constructor);
+
+        Object.defineProperty(constructor, &#39;traits&#39;, {value: [
+            class_constructor.instance
+        ]});
+    }
+
+    return constructor.traits;
+
+};
+</code></pre>
+<h3 id="class-helpers-get_class_constructor-object-">Class.helpers.get_class_constructor(object);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.get_class_constructor = function (object) {
+
+    return (
+        object.class_constructor ||
+        object.constructor &amp;&amp; object.constructor.class_constructor
+    );
+
+};
+
+Class.class_constructor =
+Class.prototype.class_constructor = Class;
+</code></pre>
+<h3 id="class-helpers-get_object_class-class_constructor-">Class.helpers.get_object_class(class_constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.get_class_namespace = function (class_constructor) {
+
+    class_constructor = Class.helpers.get_class_constructor(class_constructor);
+
+    if (!class_constructor.namespace) {
+        Object.defineProperty(class_constructor, &#39;namespace&#39;, {value: {}});
+    }
+
+    return class_constructor.namespace;
+
+};
+</code></pre>
+<h3 id="class-helpers-get_dependencies-object-">Class.helpers.get_dependencies(object);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.get_dependencies = function (object) {
+
+    if (!object.dependencies) {
+        Object.defineProperty(object, &#39;dependencies&#39;, {value: []});
+    }
+
+    return object.dependencies;
+
+};
+</code></pre>
+<h3 id="class-helpers-get_super_class-constructor-">Class.helpers.get_super_class(constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.get_super_class = function (constructor) {
+
+    if (!constructor.prototype) {
+        constructor = constructor.constructor;
+    }
+
+    return constructor.super_class;
+
+};
+</code></pre>
+<h3 id="class-helpers-eval_function-name-args-body-">Class.helpers.eval_function(name, args, body);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.eval_function = function (name, args, body) {
+
+    return ((&#39;indirect&#39;, eval)(&#39;(function &#39; + name + &#39;(&#39; + args + &#39;){&#39; + body + &#39;})&#39;));
+
+};
+</code></pre>
+<h3 id="class-helpers-namespace_upsert_constructor-class_constructor-constructor-">Class.helpers.namespace_upsert_constructor(class_constructor, constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.namespace_upsert_constructor = function (class_constructor, constructor) {
+
+    var namespace = Class.helpers.get_class_namespace(class_constructor);
+
+    if (typeof constructor === &#39;string&#39;) {
+        return namespace[constructor] || Class.helpers.spawn_constructor(class_constructor, constructor);
+    }
+
+    else if (typeof constructor.name === &#39;string&#39;) {
+        return namespace[constructor.name] || constructor;
+    }
+
+    return constructor;
+
+}
+</code></pre>
+<h3 id="class-helpers-new_error-error_message-">Class.helpers.new_error(error_message);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.new_error = function (constructor, error_message) {
+
+    var class_constructor = Class.helpers.get_class_constructor(constructor);
+
+    var error_prefix = (class_constructor !== constructor) ?
+        class_constructor + &#39;(&#39; + constructor + &#39;)&#39; :
+        constructor;
+
+    var class_error = new Error(error_prefix + &#39;: &#39; + error_message);
+
+    return class_error;
+
+};
+</code></pre>
+<h3 id="class-helpers-parse_class_constructor_source-class_constructor-">Class.helpers.parse_class_constructor_source(class_constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.parse_class_constructor_source = function (class_constructor) {
+
+    var source;
+
+    if (!class_constructor.argument_names) {
+        source = class_constructor.toSource();
+
+        class_constructor.argument_names = source.substring(
+            source.indexOf(&#39;(&#39;) + 1,
+            source.indexOf(&#39;)&#39;)
+        );
+    }
+
+    if (!class_constructor.function_body) {
+        source = source || class_constructor.toSource();
+
+        class_constructor.function_body = source.substring(
+            source.indexOf(&#39;{&#39;) + 1,
+            source.lastIndexOf(&#39;}&#39;)
+        )
+    }
+
+};
+</code></pre>
+<h3 id="class-helpers-spawn_constructor-class_constructor-constructor_name-">Class.helpers.spawn_constructor(class_constructor, constructor_name);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.spawn_constructor = function (class_constructor, constructor_name) {
+
+    Class.helpers.parse_class_constructor_source(class_constructor);
+
+    return Class.helpers.eval_function(
+        constructor_name,
+        class_constructor.argument_names,
+        class_constructor.function_body.replace(class_constructor.name, constructor_name)
+    );
+
+};
+</code></pre>
+<h3 id="class-helpers-spawn_prototype_constructor-class_constructor-constructor_prototype-">Class.helpers.spawn_prototype_constructor(class_constructor, constructor_prototype);</h3>
+<pre><code class="lang-javascript">
+
+Class.helpers.spawn_prototype_constructor = function (class_constructor, constructor_prototype) {
+
+    var constructor = constructor_prototype.constructor;
+
+    if (!constructor.name) {
+        throw Class.helpers.new_error(class_constructor, &#39;Invalid constructor name.&#39;);
+    }
+
+    constructor.prototype = constructor_prototype;
+
+    return Class.helpers.namespace_upsert_constructor(class_constructor, constructor);
+
+};
+</code></pre>
+<h2 id="class-instance-">Class.instance;</h2>
+<p>New classes start with Class.instance as a trait. This provides default instance methods for new classes.</p>
+<pre><code class="lang-javascript">
+
+Class.instance = {};
+</code></pre>
+<h3 id="class-instance-initialize-">Class.instance.initialize();</h3>
+<pre><code class="lang-javascript">
+
+Class.instance.initialize = function () {
+
+    return this;
+
+};
+</code></pre>
+<h3 id="class-instance-inject-overrides-">Class.instance.inject(overrides);</h3>
+<pre><code class="lang-javascript">
+
+Class.instance.inject = function (overrides) {
+
+    if (Array.isArray(overrides)) {
+        overrides.forEach(function (override) {
+
+            if (override.name) {
+                overrides[override.name] = override;
+            }
+
+        });
+    }
+
+    var namespace = Class.helper.get_class_namespace(this);
+
+    if (this.dependencies &amp;&amp; this.dependencies.forEach) {
+        this.dependencies.forEach(function (dependency) {
+
+            this[dependency] = overrides[dependency] || namespace[dependency];
+
+        }.bind(this));
+    }
+
+    return this;
+
+};
+</code></pre>
+<h2 id="class-prototype-">Class.prototype;</h2>
+<p>Properties are copied from Class.prototype and given to new classes.
+This is necessary because it is currently not possible to use Object.create()
+on a Function. </p>
+<pre><code class="lang-javascript">
+
+</code></pre>
+<h3 id="class-prototype-include-derivatices-">Class.prototype.include(derivatices...);</h3>
+<pre><code class="lang-javascript">
+
+Class.include =
+Class.prototype.include = function () {
+
+    var new_derivatives = [].slice.call(arguments);
+
+    new_derivatives.forEach(this.decorate.bind(this));
+
+    return this;
+
+};
+</code></pre>
+<h3 id="class-prototype-create-object-constructor-">Class.prototype.create(object, constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.create =
+Class.prototype.create = function (object, constructor) {
+
+    constructor = constructor || this;
+
+    object = object || Object.create(constructor.prototype);
+
+    Class.helpers.get_dependencies(object);
+
+    var traits = Class.helpers.get_traits(this);
+
+    traits.forEach(this.install.bind(constructor, object));
+
+    return object;
+
+};
+</code></pre>
+<h3 id="class-prototype-decorate-trait-">Class.prototype.decorate(trait);</h3>
+<pre><code class="lang-javascript">
+
+Class.decorate =
+Class.prototype.decorate = function (trait) {
+
+    var traits = Class.helpers.get_traits(this),
+        namespace = Class.helpers.get_class_namespace(this);
+
+    if (!trait) {
+        throw Class.helpers.new_error(this, &#39;Invalid trait.&#39;);
+    }
+
+    if (traits.indexOf(trait) !== -1) {
+        throw Class.helpers.new_error(this, &#39;Is already dervided from: &#39; + trait);
+    }
+
+    if (trait &amp;&amp; typeof trait.forEeach === &#39;function&#39;) {
+        trait.forEach(trait.bind(this));
+
+        return this;
+    }
+
+    if (typeof trait === &#39;string&#39; &amp;&amp; namespace[trait]) {
+        trait = namespace[trait];
+    }
+
+    if (typeof trait === &#39;function&#39;) {
+        if (trait.name &amp;&amp; namespace[trait.name] === trait) {
+            traits[trait.name] = trait;
+        }
+    }
+
+    else if (typeof trait !== &#39;object&#39;) {
+        throw Class.helpers.new_error(this, &#39;Invalid derivative.&#39;);
+    }
+
+    traits.push(trait);
+
+    return this;
+
+};
+</code></pre>
+<h3 id="class-prototype-define-name-value-context-">Class.prototype.define(name, value, context);</h3>
+<pre><code class="lang-javascript">
+
+Class.define =
+Class.prototype.define = function (name, value, context) {
+
+    if (name === &#39;constructor&#39;) return;
+
+    context = context || this.prototype || this;
+
+    if (name === &#39;dependencies&#39;) {
+        var dependencies = Class.helpers.get_dependencies(context);
+
+        if (value &amp;&amp; value.forEach) {
+            value.forEach(push_dependency);
+        }
+
+        else {
+            push_dependency(value);
+        }
+    }
+
+    return context[name] = value;
+
+    function push_dependency (dependency) {
+
+        if (typeof dependency === &#39;string&#39;) {
+            context.dependencies.push(dependency);
+        }
+
+    }
+
+};
+</code></pre>
+<h3 id="class-prototype-extend-constructor-">Class.prototype.extend(constructor);</h3>
+<pre><code class="lang-javascript">
+
+Class.extend =
+Class.prototype.extend = function (constructor) {
+
+    var derivatives = [].slice.call(arguments, 1);
+
+    constructor = this.initialize.call(this, constructor);
+
+    constructor.inherits(this);
+
+    constructor.include.apply(constructor, derivatives);
+
+    return constructor;
+
+};
+</code></pre>
+<h3 id="class-prototype-composed-object-">Class.prototype.composed(object);</h3>
+<ol>
+<li>object - Object.</li>
+</ol>
+<p>Checks if an object is an instance of the this class, or if this class
+is a trait of the object and therefore helped in its composition.</p>
+<p>Returns a Boolean.</p>
+<pre><code class="lang-javascript">
+
+Class.composed =
+Class.prototype.composed = function (object) {
+
+    if (object === this) return true;
+
+    if (object instanceof this) return true;
+
+    if (object.isPrototypeOf(this.prototype)) return true;
+
+    var object_constructor = object.constructor;
+
+    if (!object_constructor) return false;
+
+    if (object_constructor === this || object_constructor === Object) {
+        return true;
+    }
+
+    var object_traits = Class.helpers.get_traits(object);
+
+    if (object_traits[this.name] === this) return true;
+
+    if (object_traits.indexOf(this) !== -1) return true;
+
+    if (object.super_class &amp;&amp; object.super_class) {
+        return this.composed(object.super_class);
+    }
+
+    var super_class = Class.helpers.get_super_class(object_constructor);
+
+    if (super_class &amp;&amp; super_class.derives) {
+        return super_class.composed(object);
+    }
+
+    return false;
+
+};
+</code></pre>
+<h3 id="class-prototype-inherits-super_class-">Class.prototype.inherits(super_class);</h3>
+<pre><code class="lang-javascript">
+
+Class.inherits =
+Class.prototype.inherits = function (super_class) {
+
+    var current_super_class = Class.helpers.get_super_class(this);
+
+    if (current_super_class) {
+        throw Class.helpers.new_error(this, &#39;Super class already exists.&#39;);
+    }
+
+    var derivatives = Class.helpers.get_traits(this),
+        namespace = Class.helpers.get_class_namespace(this);
+
+    if (typeof super_class === &#39;string&#39;) {
+        super_class = namespace[super_class];
+    }
+
+    if (typeof super_class !== &#39;function&#39; || !super_class.name) {
+        throw Class.helpers.new_error(this, &#39;Invalid super class.&#39;);
+    }
+
+    if (super_class.create) {
+        this.prototype = super_class.create();
+    }
+
+    else {
+        this.prototype = Object.create(super_class.prototype);
+    }
+
+    Object.defineProperty(this.prototype, &#39;constructor&#39;, {value: this});
+
+    Object.defineProperty(this, &#39;super_class&#39;, {value: super_class});
+
+    super_class.create(this.prototype, this);
+
+    this.create(this.prototype);
+
+    return this;
+
+};
+</code></pre>
+<h3 id="class-prototype-initialize-definition-traits-">Class.prototype.initialize(definition, traits...);</h3>
+<ol>
+<li>definition - String, Function, Object.</li>
+<li>traits... - String, Function, Object.</li>
+</ol>
+<p>Returns a Function.</p>
+<pre><code class="lang-javascript">
+
+Class.initialize =
+Class.prototype.initialize = function () {
+
+    return Class.construct.apply(this.constructor, arguments);
+
+};
+</code></pre>
+<h3 id="class-prototype-install-object-trait-">Class.prototype.install(object, trait);</h3>
+<ol>
+<li>object - any Object.</li>
+<li>trait - String | Function | Object.</li>
+</ol>
+<p>Gives an object a trait.</p>
+<p>Returns this Function - class constructor.</p>
+<pre><code class="lang-javascript">
+
+Class.install =
+Class.prototype.install = function (object, trait) {
+
+    object = object || Object.create(this.prototype);
+
+    var traits = Class.helpers.get_traits(this),
+        namespace = Class.helpers.get_class_namespace(this);
+
+    if (typeof trait === &#39;string&#39;) {
+        trait = namespace[trait];
+    }
+
+    if (typeof trait === &#39;function&#39;) {
+        if (typeof trait.create === &#39;function&#39;) {
+            trait.create(this.prototype);
+        }
+
+        else {
+            trait.call(this, this.prototype);
+        }
+    }
+
+    if (typeof trait === &#39;object&#39; &amp;&amp; trait) {
+        if (typeof trait.constructor === &#39;object&#39; &amp;&amp; trait.constructor) {
+            Object.keys(trait.constructor).forEach(function (name) {
+
+                this.define(name, trait.constructor[name], this);
+
+            }.bind(this));
+        }
+
+        Object.keys(trait).forEach(function (name) {
+
+            this.define(name, trait[name]);
+
+        }.bind(this));
+    }
+
+    return this;
+
+};
+</code></pre>
+<h3 id="class-prototype-tosouce-">Class.prototype.toSouce();</h3>
+<p>Returns a String - the raw source of the constructor function.</p>
+<pre><code class="lang-javascript">
+
+if (!Class.prototype.toSource) {
+    Class.toSource =
+    Class.prototype.toSource =
+        Function.prototype.toSource ||
+        Function.prototype.toString;
+}
+</code></pre>
+<h3 id="class-prototype-tostring-">Class.prototype.toString();</h3>
+<p>Returns a String - the name of the class.</p>
+<pre><code class="lang-javascript">
+
+Class.toString =
+Class.prototype.toString = function () {
+
+    return this.name;
+
+};
+</code></pre>
+<h2 id="class-register-constructor-">Class.register(constructor);</h2>
+<ol>
+<li>constructor - String, Function, Object.</li>
+</ol>
+<p>Creates a new constructor function with a name and stores it in a namespace.</p>
+<p>Returns a Function.</p>
+<pre><code class="lang-javascript">
+
+Class.register = function (constructor) {
+
+    var namespace = Class.helpers.get_class_namespace(this);
+
+    if (!constructor) {
+        throw Class.helpers.new_error(this, &#39;Null constructor.&#39;);
+    }
+
+    constructor = Class.helpers.namespace_upsert_constructor(this, constructor);
+
+    if (typeof constructor === &#39;object&#39; &amp;&amp; constructor) {
+        constructor = Class.helpers.spawn_prototype_constructor(this, constructor);
+    }
+
+    if (typeof constructor !== &#39;function&#39;) {
+        throw Class.helpers.new_error(this, &#39;Invalid constructor.&#39;);
+    }
+
+    if (typeof constructor.name !== &#39;string&#39; || (/[^A-Za-z0-9$_]/).test(constructor.name)) {
+        throw Class.helpers.new_error(this, &#39;Invalid constructor name.&#39;);
+    }
+
+    if (namespace[constructor.name] &amp;&amp; namespace[constructor.name] !== constructor) {
+        if (namespace[constructor.name].toSource() === constructor.toString()) {
+            return namespace[constructor];
+        }
+
+        throw Class.helpers.new_error(this, constructor.name + &#39; is already registered.&#39;);
+    }
+
+    return namespace[constructor.name] = constructor;
+
+};
+</code></pre>
+<h2 id="class-version-">Class.version;</h2>
+<p>Exposes the semantic version number. </p>
+<pre><code class="lang-javascript">
+
+Class.version = &#39;0.0.1&#39;;
+</code></pre>
