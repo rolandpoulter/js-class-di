@@ -1,13 +1,22 @@
 {
-	"name": "dass",
-	"main": "./class.js",
-	"author": "rolandpoulter",
-	"version": "0.0.0",
-	"keywords": [],
-	"homepage": "https://github.com/rolandpoulter/js-class-di",
-	"repository": {"type": "git", "url": "git://github.com/rolandpoulter/js-class-di"},
-	"description" : "",
-	"contributors": [],
-	"dependencies": {},
-	"scripts": {"test": "node ./test"}
+  "name": "dass",
+  "main": "./output.js",
+  "author": "rolandpoulter",
+  "version": "0.0.0",
+  "keywords": [],
+  "homepage": "https://github.com/rolandpoulter/js-class-di",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rolandpoulter/js-class-di"
+  },
+  "description": "",
+  "contributors": [],
+  "dependencies": {
+    "highlight.js": "~8.0.0",
+    "mustache": "~0.8.1",
+    "marked": "~0.3.2"
+  },
+  "scripts": {
+    "test": "node ./test"
+  }
 }

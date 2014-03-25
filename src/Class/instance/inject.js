@@ -1,8 +1,12 @@
 /*!
-### Class.instance.inject(overrides);
+### Class.instance.inject(overrides?, context?);
 */
 
-Class.instance.inject = function (overrides) {
+Class.inject =
+Class.prototype.inject =
+Class.instance.inject = function (overrides, context) {
+
+	overrides = overrides || {};
 
 	if (Array.isArray(overrides)) {
 		overrides.forEach(function (override) {
@@ -14,16 +18,19 @@ Class.instance.inject = function (overrides) {
 		});
 	}
 
-	var namespace = Class.helper.get_class_namespace(this);
+	context = context || this;
 
-	if (this.dependencies && this.dependencies.forEach) {
-		this.dependencies.forEach(function (dependency) {
+	var namespace = Class.helper.get_class_namespace(context),
+			dependencies = Class.helper.get_dependencies(context);
 
-			this[dependency] = overrides[dependency] || namespace[dependency];
+	if (dependencies.forEach) {
+		dependencies.forEach(function (dependency) {
 
-		}.bind(this));
+			context[dependency] = overrides[dependency] || namespace[dependency] || context[dependency];
+
+		});
 	}
 
-	return this;
+	return context;
 
 };

@@ -33,13 +33,13 @@ assert(Class.constructor === Function);
 // debugger;
 assert(Options === new Class('Options'));
 
-assert(Options.composed(publisher) === true);
+assert(Options.derived(publisher) === true);
 
-assert(Options.composed(Publisher) === true);
+assert(Options.derived(Publisher) === true);
 
-assert(Emitter.composed(Publisher) === true);
+assert(Emitter.derived(Publisher) === true);
 
-assert(Class.composed(Publisher));
+assert(Class.derived(Publisher));
 
 
 function assert (bool) {

@@ -2,8 +2,9 @@
 ### Class.prototype.inherits(super_class);
 */
 
-Class.inherits =
 Class.prototype.inherits = function (super_class) {
+
+	// TODO: allow Class or decendants to be a super_class.
 
 	var current_super_class = Class.helpers.get_super_class(this);
 
@@ -31,6 +32,8 @@ Class.prototype.inherits = function (super_class) {
 	}
 
 	Object.defineProperty(this.prototype, 'constructor', {value: this});
+
+	Object.defineProperty(this.prototype, 'superior', {value: super_class.prototype});
 
 	Object.defineProperty(this, 'super_class', {value: super_class});
 

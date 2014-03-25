@@ -1,7 +1,11 @@
 var fs = require('fs'),
 		path = require('path');
 
-concat_and_save('./src', './output.js');
+var destination = './build/dass.' + require('./package.json').version + '.js';
+
+concat_and_save('./src', destination);
+
+fs.writeFileSync('./dass.js', fs.readFileSync('./dass.js'));
 
 function concat_and_save (filename, destination) {
 
@@ -22,23 +26,51 @@ function concat_and_save (filename, destination) {
 			dir += path.sep;
 		}
 
-		list = list.filter(function (filename) {
+		list = list.filter(function (file) {
 
-			var extention = path.extname(filename);
+			if (file.charAt(0) === '.') return false;
+
+			var extention = path.extname(file);
 
 			return extention === '.js' || extention === '';
 
 		});
 
-		list.sort(function (a, b) {
+		var prepend = [];
 
-			if (a + '.js' === b) return 1;
+		list.forEach(function (file, index) {
 
-			if (b + '.js' === a) return -1;
+			var extention = path.extname(file);
 
-			return 0;
+			if (extention === '') {
+
+				var new_index = list.indexOf(file + '.js');
+
+				if (index > new_index) return;
+
+				if (new_index === -1) {
+					prepend.push(index);
+
+					return;
+				}
+
+				list[index] = list[new_index];
+
+				list[new_index] = file;
+
+			}
 
 		});
+
+		prepend.forEach(function (index) {
+
+			list.unshift(list[index]);
+
+			list.splice(index, 1);
+
+		});
+
+		// console.log(list);
 
 		list = list.map(function (file) {
 

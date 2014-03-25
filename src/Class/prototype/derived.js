@@ -1,5 +1,5 @@
 /*!
-### Class.prototype.composed(object);
+### Class.prototype.derived(object);
 
 1. object - Object.
 
@@ -9,8 +9,8 @@ is a trait of the object and therefore helped in its composition.
 Returns a Boolean.
 */
 
-Class.composed =
-Class.prototype.composed = function (object) {
+Class.derived =
+Class.prototype.derived = function (object) {
 
 	if (object === this) return true;
 
@@ -33,13 +33,13 @@ Class.prototype.composed = function (object) {
 	if (object_traits.indexOf(this) !== -1) return true;
 
 	if (object.super_class && object.super_class) {
-		return this.composed(object.super_class);
+		return this.derived(object.super_class);
 	}
 
 	var super_class = Class.helpers.get_super_class(object_constructor);
 
 	if (super_class && super_class.derives) {
-		return super_class.composed(object);
+		return super_class.derived(object);
 	}
 
 	return false;

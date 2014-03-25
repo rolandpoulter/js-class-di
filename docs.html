@@ -1,3 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Docs</title>
+	<link rel="stylesheet" type="text/css" href="http://highlightjs.org/static/styles/tomorrow.css" />
+	<style type="text/css">
+	body {
+  font-family: 'Helvetica Neue', sans;
+  background: #ffffff;
+  color: #222;
+  margin: 2em auto;
+  padding: 0 2em;
+  width: 48em;
+  line-height: 1.5em;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+img {
+  margin: 0;
+  border: 0;
+}
+
+p {
+  margin: 1em 0;
+}
+
+a {
+  color: #00213D;
+}
+
+a:visited {
+  color: #00213D;
+  background-color: transparent;
+}
+
+a:active {
+  color: #318100;
+  background-color: transparent;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+p img {
+  border: 0;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #003a6b;
+  background-color: transparent;
+  margin: 1em 0;
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 180%;
+}
+
+h2 {
+  font-size: 160%;
+}
+
+h3 {
+  font-size: 140%;
+}
+
+h4 {
+  font-size: 110%;
+}
+
+h5 {
+  font-size: 105%;
+}
+
+h6 {
+  font-size: 100%;
+}
+
+dt {
+  font-style: italic;
+}
+
+dd {
+  margin-bottom: 1.5em;
+}
+
+li {
+  line-height: 1.5em;
+}
+
+code {
+  padding: 0.1em;
+  font-size: 14px;
+  font-family: "Menlo", monospace;
+  background-color: #f5f5f5;
+  border: 1px solid #efefef;
+}
+
+pre {
+  overflow: auto;
+  height: 4em;
+  resize: vertical;
+  font-family: "Menlo", monospace;
+  background-color: #fff;
+  padding: 0 0.5em 0.5em 0.5em;
+  line-height: 1.25em;
+  border: 1px solid #efefef;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-shadow: 0 1px 3px 0 #eee;
+  -moz-box-shadow: 0 1px 3px 0 #eee;
+  -ms-box-shadow: 0 1px 3px 0 #eee;
+  box-shadow: 0 1px 3px 0 #eee;
+}
+
+pre code {
+  background-color: transparent;
+  border-width: 0;
+}
+
+blockquote {
+  border-top: 1px solid #efefef;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-shadow: 0 1px 3px 0 #eee;
+  -moz-box-shadow: 0 1px 3px 0 #eee;
+  -ms-box-shadow: 0 1px 3px 0 #eee;
+  box-shadow: 0 1px 3px 0 #eee;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid #efefef;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-shadow: 0 1px 3px 0 #eee;
+  -moz-box-shadow: 0 1px 3px 0 #eee;
+  -ms-box-shadow: 0 1px 3px 0 #eee;
+  box-shadow: 0 1px 3px 0 #eee;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+	</style>
+</head>
+<body>
 <h1 id="new-class-definition-traits-">new Class(definition, traits...);</h1>
 <ol>
 <li>definition - String, Function, Object.</li>
@@ -5,17 +159,31 @@
 </ol>
 <p>Constructs JavaScript classes that provide easy type introspection and remove the need for boilerplate code.
 Also has inheritance and depedency injection built in. Aims to be a lightweight, and simple implementation that
-can be easily monkey patched if needed.</p>
+can be easily monkey patched if need be.</p>
 <p>Returns a Function.</p>
-<pre><code class="lang-javascript">
+<pre><code class="lang-javascript"><span class="hljs-pi">
+"use strict"</span>;
 
-&quot;use strict&quot;;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Class</span> <span class="hljs-params">()</span> {</span>
 
-function Class () {
-
-    return this.initialize.apply(this, arguments);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.initialize.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
 
 }
+
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> module !== <span class="hljs-string">'undefined'</span>) {
+    module.exports = Class;
+
+    global.Class = global.Class || Class;
+}
+
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> window !== <span class="hljs-string">'undefined'</span>) {
+    window.Class = window.Class || Class;
+}
+</code></pre>
+<h2 id="class-version-">Class.version;</h2>
+<p>Exposes the semantic version number. </p>
+<pre><code class="lang-javascript">
+Class.version = <span class="hljs-string">'0.0.1'</span>;
 </code></pre>
 <h2 id="class-construct-constructor-traits-">Class.construct(constructor, traits...);</h2>
 <ol>
@@ -24,68 +192,52 @@ function Class () {
 </ol>
 <p>Returns a Function.</p>
 <pre><code class="lang-javascript">
+Class.construct = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
-Class.construct = function (constructor) {
-
-    var class_constructor = Class.helpers.get_class_constructor(this);
+    <span class="hljs-keyword">var</span> class_constructor = Class.helpers.get_class_constructor(<span class="hljs-keyword">this</span>);
 
     constructor = class_constructor.register(constructor);
 
-    Object.keys(class_constructor.prototype).forEach(function (method_name) {
+    <span class="hljs-built_in">Object</span>.keys(class_constructor.prototype).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(method_name)</span> {</span>
 
         constructor[method_name] = class_constructor.prototype[method_name];
 
     });
 
-    constructor.include.apply(constructor, [].slice.call(arguments, 1));
+    constructor.include.apply(constructor, [].slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>));
 
     class_constructor.create(constructor, constructor);
 
     constructor.create(constructor.prototype, constructor);
 
-    if (class_constructor !== constructor) {
-        Object.defineProperty(constructor, &#39;constructor&#39;, {value: class_constructor});
+    <span class="hljs-keyword">if</span> (class_constructor !== constructor) {
+        <span class="hljs-built_in">Object</span>.defineProperty(constructor, <span class="hljs-string">'constructor'</span>, {value: class_constructor});
     }
 
-    Object.defineProperty(constructor, &#39;class_constructor&#39;, {value: class_constructor});
+    <span class="hljs-built_in">Object</span>.defineProperty(constructor, <span class="hljs-string">'class_constructor'</span>, {value: class_constructor});
 
-    return constructor;
+    <span class="hljs-keyword">return</span> constructor;
 
 };
 </code></pre>
 <h2 id="class-helpers-">Class.helpers;</h2>
 <p>A home for helper methods that do not need to be class or instance methods.</p>
 <pre><code class="lang-javascript">
-
 Class.helpers = {};
 </code></pre>
-<h3 id="class-helpers-get_traits-constructor-">Class.helpers.get_traits(constructor);</h3>
+<h3 id="class-helpers-eval_function-name-args-body-">Class.helpers.eval_function(name, args, body);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.eval_function = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, args, body)</span> {</span>
 
-Class.helpers.get_traits = function (constructor) {
-
-    if (!constructor.prototype) {
-        constructor = constructor.constructor;
-    }
-
-    if (!constructor.traits) {
-        var class_constructor = Class.helpers.get_class_constructor(constructor);
-
-        Object.defineProperty(constructor, &#39;traits&#39;, {value: [
-            class_constructor.instance
-        ]});
-    }
-
-    return constructor.traits;
+    <span class="hljs-keyword">return</span> ((<span class="hljs-string">'indirect'</span>, <span class="hljs-built_in">eval</span>)(<span class="hljs-string">'(function '</span> + name + <span class="hljs-string">'('</span> + args + <span class="hljs-string">'){'</span> + body + <span class="hljs-string">'})'</span>));
 
 };
 </code></pre>
 <h3 id="class-helpers-get_class_constructor-object-">Class.helpers.get_class_constructor(object);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.get_class_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
-Class.helpers.get_class_constructor = function (object) {
-
-    return (
+    <span class="hljs-keyword">return</span> (
         object.class_constructor ||
         object.constructor &amp;&amp; object.constructor.class_constructor
     );
@@ -97,112 +249,117 @@ Class.prototype.class_constructor = Class;
 </code></pre>
 <h3 id="class-helpers-get_object_class-class_constructor-">Class.helpers.get_object_class(class_constructor);</h3>
 <pre><code class="lang-javascript">
-
-Class.helpers.get_class_namespace = function (class_constructor) {
+Class.helpers.get_class_namespace = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor)</span> {</span>
 
     class_constructor = Class.helpers.get_class_constructor(class_constructor);
 
-    if (!class_constructor.namespace) {
-        Object.defineProperty(class_constructor, &#39;namespace&#39;, {value: {}});
+    <span class="hljs-keyword">if</span> (!class_constructor.namespace) {
+        <span class="hljs-built_in">Object</span>.defineProperty(class_constructor, <span class="hljs-string">'namespace'</span>, {value: {}});
     }
 
-    return class_constructor.namespace;
+    <span class="hljs-keyword">return</span> class_constructor.namespace;
 
 };
 </code></pre>
 <h3 id="class-helpers-get_dependencies-object-">Class.helpers.get_dependencies(object);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.get_dependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
-Class.helpers.get_dependencies = function (object) {
-
-    if (!object.dependencies) {
-        Object.defineProperty(object, &#39;dependencies&#39;, {value: []});
+    <span class="hljs-keyword">if</span> (!object.dependencies) {
+        <span class="hljs-built_in">Object</span>.defineProperty(object, <span class="hljs-string">'dependencies'</span>, {value: []});
     }
 
-    return object.dependencies;
+    <span class="hljs-keyword">return</span> object.dependencies;
 
 };
 </code></pre>
 <h3 id="class-helpers-get_super_class-constructor-">Class.helpers.get_super_class(constructor);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.get_super_class = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
-Class.helpers.get_super_class = function (constructor) {
-
-    if (!constructor.prototype) {
+    <span class="hljs-keyword">if</span> (!constructor.prototype) {
         constructor = constructor.constructor;
     }
 
-    return constructor.super_class;
+    <span class="hljs-keyword">return</span> constructor.super_class;
 
 };
 </code></pre>
-<h3 id="class-helpers-eval_function-name-args-body-">Class.helpers.eval_function(name, args, body);</h3>
+<h3 id="class-helpers-get_traits-constructor-">Class.helpers.get_traits(constructor);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.get_traits = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
-Class.helpers.eval_function = function (name, args, body) {
+    <span class="hljs-keyword">if</span> (!constructor.prototype) {
+        constructor = constructor.constructor;
+    }
 
-    return ((&#39;indirect&#39;, eval)(&#39;(function &#39; + name + &#39;(&#39; + args + &#39;){&#39; + body + &#39;})&#39;));
+    <span class="hljs-keyword">if</span> (!constructor.traits) {
+        <span class="hljs-keyword">var</span> class_constructor = Class.helpers.get_class_constructor(constructor);
+
+        <span class="hljs-built_in">Object</span>.defineProperty(constructor, <span class="hljs-string">'traits'</span>, {value: [
+            class_constructor.instance
+        ]});
+    }
+
+    <span class="hljs-keyword">return</span> constructor.traits;
 
 };
 </code></pre>
 <h3 id="class-helpers-namespace_upsert_constructor-class_constructor-constructor-">Class.helpers.namespace_upsert_constructor(class_constructor, constructor);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.namespace_upsert_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor)</span> {</span>
 
-Class.helpers.namespace_upsert_constructor = function (class_constructor, constructor) {
+    <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(class_constructor);
 
-    var namespace = Class.helpers.get_class_namespace(class_constructor);
-
-    if (typeof constructor === &#39;string&#39;) {
-        return namespace[constructor] || Class.helpers.spawn_constructor(class_constructor, constructor);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> constructor === <span class="hljs-string">'string'</span>) {
+        <span class="hljs-keyword">return</span> namespace[constructor] || Class.helpers.spawn_constructor(class_constructor, constructor);
     }
 
-    else if (typeof constructor.name === &#39;string&#39;) {
-        return namespace[constructor.name] || constructor;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> constructor.name === <span class="hljs-string">'string'</span>) {
+        <span class="hljs-keyword">return</span> namespace[constructor.name] || constructor;
     }
 
-    return constructor;
+    <span class="hljs-keyword">return</span> constructor;
 
 }
 </code></pre>
 <h3 id="class-helpers-new_error-error_message-">Class.helpers.new_error(error_message);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.new_error = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor, error_message)</span> {</span>
 
-Class.helpers.new_error = function (constructor, error_message) {
+    <span class="hljs-keyword">var</span> class_constructor = Class.helpers.get_class_constructor(constructor);
 
-    var class_constructor = Class.helpers.get_class_constructor(constructor);
-
-    var error_prefix = (class_constructor !== constructor) ?
-        class_constructor + &#39;(&#39; + constructor + &#39;)&#39; :
+    <span class="hljs-keyword">var</span> error_prefix = (class_constructor !== constructor) ?
+        class_constructor + <span class="hljs-string">'('</span> + constructor + <span class="hljs-string">')'</span> :
         constructor;
 
-    var class_error = new Error(error_prefix + &#39;: &#39; + error_message);
+    <span class="hljs-keyword">var</span> class_error = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(error_prefix + <span class="hljs-string">': '</span> + error_message);
 
-    return class_error;
+    <span class="hljs-keyword">return</span> class_error;
 
 };
 </code></pre>
 <h3 id="class-helpers-parse_class_constructor_source-class_constructor-">Class.helpers.parse_class_constructor_source(class_constructor);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.parse_class_constructor_source = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor)</span> {</span>
 
-Class.helpers.parse_class_constructor_source = function (class_constructor) {
+    <span class="hljs-keyword">var</span> source;
 
-    var source;
-
-    if (!class_constructor.argument_names) {
+    <span class="hljs-keyword">if</span> (!class_constructor.argument_names) {
         source = class_constructor.toSource();
 
         class_constructor.argument_names = source.substring(
-            source.indexOf(&#39;(&#39;) + 1,
-            source.indexOf(&#39;)&#39;)
+            source.indexOf(<span class="hljs-string">'('</span>) + <span class="hljs-number">1</span>,
+            source.indexOf(<span class="hljs-string">')'</span>)
         );
     }
 
-    if (!class_constructor.function_body) {
+    <span class="hljs-keyword">if</span> (!class_constructor.function_body) {
         source = source || class_constructor.toSource();
 
         class_constructor.function_body = source.substring(
-            source.indexOf(&#39;{&#39;) + 1,
-            source.lastIndexOf(&#39;}&#39;)
+            source.indexOf(<span class="hljs-string">'{'</span>) + <span class="hljs-number">1</span>,
+            source.lastIndexOf(<span class="hljs-string">'}'</span>)
         )
     }
 
@@ -210,12 +367,11 @@ Class.helpers.parse_class_constructor_source = function (class_constructor) {
 </code></pre>
 <h3 id="class-helpers-spawn_constructor-class_constructor-constructor_name-">Class.helpers.spawn_constructor(class_constructor, constructor_name);</h3>
 <pre><code class="lang-javascript">
-
-Class.helpers.spawn_constructor = function (class_constructor, constructor_name) {
+Class.helpers.spawn_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor_name)</span> {</span>
 
     Class.helpers.parse_class_constructor_source(class_constructor);
 
-    return Class.helpers.eval_function(
+    <span class="hljs-keyword">return</span> Class.helpers.eval_function(
         constructor_name,
         class_constructor.argument_names,
         class_constructor.function_body.replace(class_constructor.name, constructor_name)
@@ -225,62 +381,126 @@ Class.helpers.spawn_constructor = function (class_constructor, constructor_name)
 </code></pre>
 <h3 id="class-helpers-spawn_prototype_constructor-class_constructor-constructor_prototype-">Class.helpers.spawn_prototype_constructor(class_constructor, constructor_prototype);</h3>
 <pre><code class="lang-javascript">
+Class.helpers.spawn_prototype_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor_prototype)</span> {</span>
 
-Class.helpers.spawn_prototype_constructor = function (class_constructor, constructor_prototype) {
+    <span class="hljs-keyword">var</span> constructor = constructor_prototype.constructor;
 
-    var constructor = constructor_prototype.constructor;
-
-    if (!constructor.name) {
-        throw Class.helpers.new_error(class_constructor, &#39;Invalid constructor name.&#39;);
+    <span class="hljs-keyword">if</span> (!constructor.name) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(class_constructor, <span class="hljs-string">'Invalid constructor name.'</span>);
     }
 
     constructor.prototype = constructor_prototype;
 
-    return Class.helpers.namespace_upsert_constructor(class_constructor, constructor);
+    <span class="hljs-keyword">return</span> Class.helpers.namespace_upsert_constructor(class_constructor, constructor);
 
 };
 </code></pre>
 <h2 id="class-instance-">Class.instance;</h2>
 <p>New classes start with Class.instance as a trait. This provides default instance methods for new classes.</p>
 <pre><code class="lang-javascript">
-
 Class.instance = {};
 </code></pre>
 <h3 id="class-instance-initialize-">Class.instance.initialize();</h3>
 <pre><code class="lang-javascript">
+Class.instance.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
-Class.instance.initialize = function () {
-
-    return this;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
-<h3 id="class-instance-inject-overrides-">Class.instance.inject(overrides);</h3>
+<h3 id="class-instance-inject-overrides-context-">Class.instance.inject(overrides?, context?);</h3>
 <pre><code class="lang-javascript">
+Class.inject =
+Class.prototype.inject =
+Class.instance.inject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(overrides, context)</span> {</span>
 
-Class.instance.inject = function (overrides) {
+    overrides = overrides || {};
 
-    if (Array.isArray(overrides)) {
-        overrides.forEach(function (override) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Array</span>.isArray(overrides)) {
+        overrides.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(override)</span> {</span>
 
-            if (override.name) {
+            <span class="hljs-keyword">if</span> (override.name) {
                 overrides[override.name] = override;
             }
 
         });
     }
 
-    var namespace = Class.helper.get_class_namespace(this);
+    context = context || <span class="hljs-keyword">this</span>;
 
-    if (this.dependencies &amp;&amp; this.dependencies.forEach) {
-        this.dependencies.forEach(function (dependency) {
+    <span class="hljs-keyword">var</span> namespace = Class.helper.get_class_namespace(context),
+            dependencies = Class.helper.get_dependencies(context);
 
-            this[dependency] = overrides[dependency] || namespace[dependency];
+    <span class="hljs-keyword">if</span> (dependencies.forEach) {
+        dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(dependency)</span> {</span>
 
-        }.bind(this));
+            context[dependency] = overrides[dependency] || namespace[dependency] || context[dependency];
+
+        });
     }
 
-    return this;
+    <span class="hljs-keyword">return</span> context;
+
+};
+</code></pre>
+<h2 id="class-get-name-">Class.get(name);</h2>
+<pre><code class="lang-javascript">
+Class.get = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
+
+    <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">return</span> namespace[name];
+
+};
+</code></pre>
+<h2 id="class-register-constructor-">Class.register(constructor);</h2>
+<ol>
+<li>constructor - String, Function, Object.</li>
+</ol>
+<p>Creates a new constructor function with a name and stores it in a namespace.</p>
+<p>Returns a Function.</p>
+<pre><code class="lang-javascript">
+Class.register = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
+
+    <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">if</span> (!constructor) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Null constructor.'</span>);
+    }
+
+    constructor = Class.helpers.namespace_upsert_constructor(<span class="hljs-keyword">this</span>, constructor);
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> constructor === <span class="hljs-string">'object'</span> &amp;&amp; constructor) {
+        constructor = Class.helpers.spawn_prototype_constructor(<span class="hljs-keyword">this</span>, constructor);
+    }
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> constructor !== <span class="hljs-string">'function'</span>) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Invalid constructor.'</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> constructor.name !== <span class="hljs-string">'string'</span> || (<span class="hljs-regexp">/[^A-Za-z0-9$_]/</span>).test(constructor.name)) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Invalid constructor name.'</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (namespace[constructor.name] &amp;&amp; namespace[constructor.name] !== constructor) {
+        <span class="hljs-keyword">if</span> (namespace[constructor.name].toSource() === constructor.toString()) {
+            <span class="hljs-keyword">return</span> namespace[constructor];
+        }
+
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, constructor.name + <span class="hljs-string">' is already registered.'</span>);
+    }
+
+    <span class="hljs-keyword">return</span> namespace[constructor.name] = constructor;
+
+};
+</code></pre>
+<h2 id="class-set-name-value-">Class.set(name, value);</h2>
+<pre><code class="lang-javascript">
+Class.set = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, value)</span> {</span>
+
+    <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">return</span> namespace[name] = value;
 
 };
 </code></pre>
@@ -288,113 +508,93 @@ Class.instance.inject = function (overrides) {
 <p>Properties are copied from Class.prototype and given to new classes.
 This is necessary because it is currently not possible to use Object.create()
 on a Function. </p>
-<pre><code class="lang-javascript">
-
-</code></pre>
-<h3 id="class-prototype-include-derivatices-">Class.prototype.include(derivatices...);</h3>
-<pre><code class="lang-javascript">
-
-Class.include =
-Class.prototype.include = function () {
-
-    var new_derivatives = [].slice.call(arguments);
-
-    new_derivatives.forEach(this.decorate.bind(this));
-
-    return this;
-
-};
-</code></pre>
 <h3 id="class-prototype-create-object-constructor-">Class.prototype.create(object, constructor);</h3>
 <pre><code class="lang-javascript">
-
 Class.create =
-Class.prototype.create = function (object, constructor) {
+Class.prototype.create = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, constructor)</span> {</span>
 
-    constructor = constructor || this;
+    constructor = constructor || <span class="hljs-keyword">this</span>;
 
-    object = object || Object.create(constructor.prototype);
+    object = object || <span class="hljs-built_in">Object</span>.create(constructor.prototype);
 
     Class.helpers.get_dependencies(object);
 
-    var traits = Class.helpers.get_traits(this);
+    <span class="hljs-keyword">var</span> traits = Class.helpers.get_traits(<span class="hljs-keyword">this</span>);
 
-    traits.forEach(this.install.bind(constructor, object));
+    traits.forEach(<span class="hljs-keyword">this</span>.install.bind(constructor, object));
 
-    return object;
+    <span class="hljs-keyword">return</span> object;
 
 };
 </code></pre>
 <h3 id="class-prototype-decorate-trait-">Class.prototype.decorate(trait);</h3>
 <pre><code class="lang-javascript">
-
 Class.decorate =
-Class.prototype.decorate = function (trait) {
+Class.prototype.decorate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(trait)</span> {</span>
 
-    var traits = Class.helpers.get_traits(this),
-        namespace = Class.helpers.get_class_namespace(this);
+    <span class="hljs-keyword">var</span> traits = Class.helpers.get_traits(<span class="hljs-keyword">this</span>),
+        namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
 
-    if (!trait) {
-        throw Class.helpers.new_error(this, &#39;Invalid trait.&#39;);
+    <span class="hljs-keyword">if</span> (!trait) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Invalid trait.'</span>);
     }
 
-    if (traits.indexOf(trait) !== -1) {
-        throw Class.helpers.new_error(this, &#39;Is already dervided from: &#39; + trait);
+    <span class="hljs-keyword">if</span> (traits.indexOf(trait) !== -<span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Is already dervided from: '</span> + trait);
     }
 
-    if (trait &amp;&amp; typeof trait.forEeach === &#39;function&#39;) {
-        trait.forEach(trait.bind(this));
+    <span class="hljs-keyword">if</span> (trait &amp;&amp; <span class="hljs-keyword">typeof</span> trait.forEeach === <span class="hljs-string">'function'</span>) {
+        trait.forEach(trait.bind(<span class="hljs-keyword">this</span>));
 
-        return this;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     }
 
-    if (typeof trait === &#39;string&#39; &amp;&amp; namespace[trait]) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait === <span class="hljs-string">'string'</span> &amp;&amp; namespace[trait]) {
         trait = namespace[trait];
     }
 
-    if (typeof trait === &#39;function&#39;) {
-        if (trait.name &amp;&amp; namespace[trait.name] === trait) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait === <span class="hljs-string">'function'</span>) {
+        <span class="hljs-keyword">if</span> (trait.name &amp;&amp; namespace[trait.name] === trait) {
             traits[trait.name] = trait;
         }
     }
 
-    else if (typeof trait !== &#39;object&#39;) {
-        throw Class.helpers.new_error(this, &#39;Invalid derivative.&#39;);
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait !== <span class="hljs-string">'object'</span>) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Invalid derivative.'</span>);
     }
 
     traits.push(trait);
 
-    return this;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
 <h3 id="class-prototype-define-name-value-context-">Class.prototype.define(name, value, context);</h3>
 <pre><code class="lang-javascript">
-
 Class.define =
-Class.prototype.define = function (name, value, context) {
+Class.prototype.define = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, value, context)</span> {</span>
 
-    if (name === &#39;constructor&#39;) return;
+    <span class="hljs-keyword">if</span> (name === <span class="hljs-string">'constructor'</span>) <span class="hljs-keyword">return</span>;
 
-    context = context || this.prototype || this;
+    context = context || <span class="hljs-keyword">this</span>.prototype || <span class="hljs-keyword">this</span>;
 
-    if (name === &#39;dependencies&#39;) {
-        var dependencies = Class.helpers.get_dependencies(context);
+    <span class="hljs-keyword">if</span> (name === <span class="hljs-string">'dependencies'</span>) {
+        <span class="hljs-keyword">var</span> dependencies = Class.helpers.get_dependencies(context);
 
-        if (value &amp;&amp; value.forEach) {
+        <span class="hljs-keyword">if</span> (value &amp;&amp; value.forEach) {
             value.forEach(push_dependency);
         }
 
-        else {
+        <span class="hljs-keyword">else</span> {
             push_dependency(value);
         }
     }
 
-    return context[name] = value;
+    <span class="hljs-keyword">return</span> context[name] = value;
 
-    function push_dependency (dependency) {
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">push_dependency</span> <span class="hljs-params">(dependency)</span> {</span>
 
-        if (typeof dependency === &#39;string&#39;) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dependency === <span class="hljs-string">'string'</span>) {
             context.dependencies.push(dependency);
         }
 
@@ -402,25 +602,7 @@ Class.prototype.define = function (name, value, context) {
 
 };
 </code></pre>
-<h3 id="class-prototype-extend-constructor-">Class.prototype.extend(constructor);</h3>
-<pre><code class="lang-javascript">
-
-Class.extend =
-Class.prototype.extend = function (constructor) {
-
-    var derivatives = [].slice.call(arguments, 1);
-
-    constructor = this.initialize.call(this, constructor);
-
-    constructor.inherits(this);
-
-    constructor.include.apply(constructor, derivatives);
-
-    return constructor;
-
-};
-</code></pre>
-<h3 id="class-prototype-composed-object-">Class.prototype.composed(object);</h3>
+<h3 id="class-prototype-derived-object-">Class.prototype.derived(object);</h3>
 <ol>
 <li>object - Object.</li>
 </ol>
@@ -428,84 +610,115 @@ Class.prototype.extend = function (constructor) {
 is a trait of the object and therefore helped in its composition.</p>
 <p>Returns a Boolean.</p>
 <pre><code class="lang-javascript">
+Class.derived =
+Class.prototype.derived = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
-Class.composed =
-Class.prototype.composed = function (object) {
+    <span class="hljs-keyword">if</span> (object === <span class="hljs-keyword">this</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 
-    if (object === this) return true;
+    <span class="hljs-keyword">if</span> (object <span class="hljs-keyword">instanceof</span> <span class="hljs-keyword">this</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 
-    if (object instanceof this) return true;
+    <span class="hljs-keyword">if</span> (object.isPrototypeOf(<span class="hljs-keyword">this</span>.prototype)) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 
-    if (object.isPrototypeOf(this.prototype)) return true;
+    <span class="hljs-keyword">var</span> object_constructor = object.constructor;
 
-    var object_constructor = object.constructor;
+    <span class="hljs-keyword">if</span> (!object_constructor) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 
-    if (!object_constructor) return false;
-
-    if (object_constructor === this || object_constructor === Object) {
-        return true;
+    <span class="hljs-keyword">if</span> (object_constructor === <span class="hljs-keyword">this</span> || object_constructor === <span class="hljs-built_in">Object</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     }
 
-    var object_traits = Class.helpers.get_traits(object);
+    <span class="hljs-keyword">var</span> object_traits = Class.helpers.get_traits(object);
 
-    if (object_traits[this.name] === this) return true;
+    <span class="hljs-keyword">if</span> (object_traits[<span class="hljs-keyword">this</span>.name] === <span class="hljs-keyword">this</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 
-    if (object_traits.indexOf(this) !== -1) return true;
+    <span class="hljs-keyword">if</span> (object_traits.indexOf(<span class="hljs-keyword">this</span>) !== -<span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 
-    if (object.super_class &amp;&amp; object.super_class) {
-        return this.composed(object.super_class);
+    <span class="hljs-keyword">if</span> (object.super_class &amp;&amp; object.super_class) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.derived(object.super_class);
     }
 
-    var super_class = Class.helpers.get_super_class(object_constructor);
+    <span class="hljs-keyword">var</span> super_class = Class.helpers.get_super_class(object_constructor);
 
-    if (super_class &amp;&amp; super_class.derives) {
-        return super_class.composed(object);
+    <span class="hljs-keyword">if</span> (super_class &amp;&amp; super_class.derives) {
+        <span class="hljs-keyword">return</span> super_class.derived(object);
     }
 
-    return false;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+};
+</code></pre>
+<h3 id="class-prototype-extend-constructor-">Class.prototype.extend(constructor);</h3>
+<pre><code class="lang-javascript">
+Class.extend =
+Class.prototype.extend = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
+
+    <span class="hljs-keyword">var</span> derivatives = [].slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
+
+    constructor = <span class="hljs-keyword">this</span>.initialize.call(<span class="hljs-keyword">this</span>, constructor);
+
+    constructor.inherits(<span class="hljs-keyword">this</span>);
+
+    constructor.include.apply(constructor, derivatives);
+
+    <span class="hljs-keyword">return</span> constructor;
+
+};
+</code></pre>
+<h3 id="class-prototype-include-derivatices-">Class.prototype.include(derivatices...);</h3>
+<pre><code class="lang-javascript">
+Class.include =
+Class.prototype.include = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+    <span class="hljs-keyword">var</span> new_derivatives = [].slice.call(<span class="hljs-built_in">arguments</span>);
+
+    new_derivatives.forEach(<span class="hljs-keyword">this</span>.decorate.bind(<span class="hljs-keyword">this</span>));
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
 <h3 id="class-prototype-inherits-super_class-">Class.prototype.inherits(super_class);</h3>
 <pre><code class="lang-javascript">
+Class.prototype.inherits = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(super_class)</span> {</span>
 
-Class.inherits =
-Class.prototype.inherits = function (super_class) {
+    <span class="hljs-comment">// TODO: allow Class or decendants to be a super_class.</span>
 
-    var current_super_class = Class.helpers.get_super_class(this);
+    <span class="hljs-keyword">var</span> current_super_class = Class.helpers.get_super_class(<span class="hljs-keyword">this</span>);
 
-    if (current_super_class) {
-        throw Class.helpers.new_error(this, &#39;Super class already exists.&#39;);
+    <span class="hljs-keyword">if</span> (current_super_class) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Super class already exists.'</span>);
     }
 
-    var derivatives = Class.helpers.get_traits(this),
-        namespace = Class.helpers.get_class_namespace(this);
+    <span class="hljs-keyword">var</span> derivatives = Class.helpers.get_traits(<span class="hljs-keyword">this</span>),
+        namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
 
-    if (typeof super_class === &#39;string&#39;) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> super_class === <span class="hljs-string">'string'</span>) {
         super_class = namespace[super_class];
     }
 
-    if (typeof super_class !== &#39;function&#39; || !super_class.name) {
-        throw Class.helpers.new_error(this, &#39;Invalid super class.&#39;);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> super_class !== <span class="hljs-string">'function'</span> || !super_class.name) {
+        <span class="hljs-keyword">throw</span> Class.helpers.new_error(<span class="hljs-keyword">this</span>, <span class="hljs-string">'Invalid super class.'</span>);
     }
 
-    if (super_class.create) {
-        this.prototype = super_class.create();
+    <span class="hljs-keyword">if</span> (super_class.create) {
+        <span class="hljs-keyword">this</span>.prototype = super_class.create();
     }
 
-    else {
-        this.prototype = Object.create(super_class.prototype);
+    <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.prototype = <span class="hljs-built_in">Object</span>.create(super_class.prototype);
     }
 
-    Object.defineProperty(this.prototype, &#39;constructor&#39;, {value: this});
+    <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>.prototype, <span class="hljs-string">'constructor'</span>, {value: <span class="hljs-keyword">this</span>});
 
-    Object.defineProperty(this, &#39;super_class&#39;, {value: super_class});
+    <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>.prototype, <span class="hljs-string">'superior'</span>, {value: super_class.prototype});
 
-    super_class.create(this.prototype, this);
+    <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'super_class'</span>, {value: super_class});
 
-    this.create(this.prototype);
+    super_class.create(<span class="hljs-keyword">this</span>.prototype, <span class="hljs-keyword">this</span>);
 
-    return this;
+    <span class="hljs-keyword">this</span>.create(<span class="hljs-keyword">this</span>.prototype);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
@@ -516,11 +729,10 @@ Class.prototype.inherits = function (super_class) {
 </ol>
 <p>Returns a Function.</p>
 <pre><code class="lang-javascript">
-
 Class.initialize =
-Class.prototype.initialize = function () {
+Class.prototype.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
-    return Class.construct.apply(this.constructor, arguments);
+    <span class="hljs-keyword">return</span> Class.construct.apply(<span class="hljs-keyword">this</span>.constructor, <span class="hljs-built_in">arguments</span>);
 
 };
 </code></pre>
@@ -532,116 +744,68 @@ Class.prototype.initialize = function () {
 <p>Gives an object a trait.</p>
 <p>Returns this Function - class constructor.</p>
 <pre><code class="lang-javascript">
-
 Class.install =
-Class.prototype.install = function (object, trait) {
+Class.prototype.install = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, trait)</span> {</span>
 
-    object = object || Object.create(this.prototype);
+    object = object || <span class="hljs-built_in">Object</span>.create(<span class="hljs-keyword">this</span>.prototype);
 
-    var traits = Class.helpers.get_traits(this),
-        namespace = Class.helpers.get_class_namespace(this);
+    <span class="hljs-keyword">var</span> traits = Class.helpers.get_traits(<span class="hljs-keyword">this</span>),
+        namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
 
-    if (typeof trait === &#39;string&#39;) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait === <span class="hljs-string">'string'</span>) {
         trait = namespace[trait];
     }
 
-    if (typeof trait === &#39;function&#39;) {
-        if (typeof trait.create === &#39;function&#39;) {
-            trait.create(this.prototype);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait === <span class="hljs-string">'function'</span>) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait.create === <span class="hljs-string">'function'</span>) {
+            trait.create(<span class="hljs-keyword">this</span>.prototype);
         }
 
-        else {
-            trait.call(this, this.prototype);
+        <span class="hljs-keyword">else</span> {
+            trait.call(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.prototype);
         }
     }
 
-    if (typeof trait === &#39;object&#39; &amp;&amp; trait) {
-        if (typeof trait.constructor === &#39;object&#39; &amp;&amp; trait.constructor) {
-            Object.keys(trait.constructor).forEach(function (name) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait === <span class="hljs-string">'object'</span> &amp;&amp; trait) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> trait.constructor === <span class="hljs-string">'object'</span> &amp;&amp; trait.constructor) {
+            <span class="hljs-built_in">Object</span>.keys(trait.constructor).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
 
-                this.define(name, trait.constructor[name], this);
+                <span class="hljs-keyword">this</span>.define(name, trait.constructor[name], <span class="hljs-keyword">this</span>);
 
-            }.bind(this));
+            }.bind(<span class="hljs-keyword">this</span>));
         }
 
-        Object.keys(trait).forEach(function (name) {
+        <span class="hljs-built_in">Object</span>.keys(trait).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
 
-            this.define(name, trait[name]);
+            <span class="hljs-keyword">this</span>.define(name, trait[name]);
 
-        }.bind(this));
+        }.bind(<span class="hljs-keyword">this</span>));
     }
 
-    return this;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
 <h3 id="class-prototype-tosouce-">Class.prototype.toSouce();</h3>
 <p>Returns a String - the raw source of the constructor function.</p>
 <pre><code class="lang-javascript">
-
-if (!Class.prototype.toSource) {
+<span class="hljs-keyword">if</span> (!Class.prototype.toSource) {
     Class.toSource =
     Class.prototype.toSource =
-        Function.prototype.toSource ||
-        Function.prototype.toString;
+        <span class="hljs-built_in">Function</span>.prototype.toSource ||
+        <span class="hljs-built_in">Function</span>.prototype.toString;
 }
 </code></pre>
 <h3 id="class-prototype-tostring-">Class.prototype.toString();</h3>
 <p>Returns a String - the name of the class.</p>
 <pre><code class="lang-javascript">
-
 Class.toString =
-Class.prototype.toString = function () {
+Class.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
-    return this.name;
-
-};
-</code></pre>
-<h2 id="class-register-constructor-">Class.register(constructor);</h2>
-<ol>
-<li>constructor - String, Function, Object.</li>
-</ol>
-<p>Creates a new constructor function with a name and stores it in a namespace.</p>
-<p>Returns a Function.</p>
-<pre><code class="lang-javascript">
-
-Class.register = function (constructor) {
-
-    var namespace = Class.helpers.get_class_namespace(this);
-
-    if (!constructor) {
-        throw Class.helpers.new_error(this, &#39;Null constructor.&#39;);
-    }
-
-    constructor = Class.helpers.namespace_upsert_constructor(this, constructor);
-
-    if (typeof constructor === &#39;object&#39; &amp;&amp; constructor) {
-        constructor = Class.helpers.spawn_prototype_constructor(this, constructor);
-    }
-
-    if (typeof constructor !== &#39;function&#39;) {
-        throw Class.helpers.new_error(this, &#39;Invalid constructor.&#39;);
-    }
-
-    if (typeof constructor.name !== &#39;string&#39; || (/[^A-Za-z0-9$_]/).test(constructor.name)) {
-        throw Class.helpers.new_error(this, &#39;Invalid constructor name.&#39;);
-    }
-
-    if (namespace[constructor.name] &amp;&amp; namespace[constructor.name] !== constructor) {
-        if (namespace[constructor.name].toSource() === constructor.toString()) {
-            return namespace[constructor];
-        }
-
-        throw Class.helpers.new_error(this, constructor.name + &#39; is already registered.&#39;);
-    }
-
-    return namespace[constructor.name] = constructor;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.name;
 
 };
 </code></pre>
-<h2 id="class-version-">Class.version;</h2>
-<p>Exposes the semantic version number. </p>
-<pre><code class="lang-javascript">
 
-Class.version = &#39;0.0.1&#39;;
-</code></pre>
+</body>
+</html>

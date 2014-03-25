@@ -1,9 +1,35 @@
 var fs = require('fs'),
 		path = require('path');
 
-parse_docs('./output.js', './README.md', './docs.html');
+var hljs = require('highlight.js'),
+		marked = require('marked'),
+		mustache = require('mustache');
 
-function parse_docs (source, md_destination, html_destination) {
+var template_dir = './docs-templates';
+
+// install highlight.js as the highlighter for marked
+// use all other default options
+marked.setOptions({
+	highlight: function(code, lang) {
+
+		var hl;
+
+		try {
+			hl = hljs.highlight(lang, code);
+		}
+
+		catch (e) {
+			return code;
+		}
+
+		return hl.value;
+
+	}
+});
+
+parse_docs('./dass.js', './README.md', './docs.html');
+
+function parse_docs (source, md_destination, html_destination, options) {
 
 	var input = fs.readFileSync(source).toString(),
 			start = Date.now(),
@@ -37,26 +63,54 @@ function parse_docs (source, md_destination, html_destination) {
 
 	segments.forEach(function (segment) {
 
-		output += '\n' + segment.docs;
+		var docs = segment.docs;
 
-		output += '\n```javascript\n' + segment.code + '\n```\n';
+		docs = docs.replace(/^[\n\r]+/, '');
+		docs = docs.replace('/[\n\r]+$/', '');
+
+		output += segment.docs;
+
+		var code = segment.code;
+
+		code = code.replace(/^[\n\r]+/, '');
+		code = code.replace('/[\n\r]+$/', '')
+
+		if (!/\S/.test(code)) return;
+
+		output += '```javascript' + segment.code + '```';
 
 	});
 
 	fs.writeFileSync(md_destination, output);
 
-	fs.writeFileSync(html_destination, html_docs(require('marked')(output)));
+	fs.writeFileSync(html_destination, html_docs(marked(output, null, options)));
 
 	console.log('Documentation generated in ' + (Date.now() - start) + ' ms.');
 
 }
 
-function html_docs (markdown_fragment) {
+function html_docs (markdown_fragment, template_name, options) {
 
-	var html = '';
+	options = options || {};
 
-	html += markdown_fragment;
+	template_name = template_name || options.template || 'default';
 
-	return html;
+	template = fs.readFileSync(template_dir + '/' + template_name + '.mustache', 'utf-8');
+
+	options.content = markdown_fragment || options.input;
+
+	options.title = options.title ? options.title : 'Docs';
+
+	options.css_inline = options.css_inline || fs.readFileSync(template_dir + '/' + template_name + '.css', 'utf-8');
+
+	if (options.css_link) {
+		delete options.css_inline;
+	}
+
+	options.css_hljs_theme = options.css_hljs_theme ||
+		'http://highlightjs.org/static/styles/tomorrow.css'
+
+	return mustache.render(template, options);
 
 }
+
