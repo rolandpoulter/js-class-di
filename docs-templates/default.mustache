@@ -16,6 +16,24 @@
 	{{/css_inline}}
 </head>
 <body>
-{{{ content }}}
+	<ul class="index">
+		{{#content}}
+			<li><a href="#{{id}}">{{{name}}}</a></li>
+		{{/content}}
+	</uL>
+	<div class="page">
+		{{#content}}
+			<div class="section" id="{{id}}">
+				<div class="docs">
+					{{{docs}}}
+				</div>
+				{{#code}}
+					<div class="code">
+						{{{code}}}
+					</div>
+				{{/code}}
+			</div>
+		{{/content}}
+	</div>
 </body>
 </html>

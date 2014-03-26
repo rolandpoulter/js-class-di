@@ -5,7 +5,7 @@ var destination = './build/dass.' + require('./package.json').version + '.js';
 
 concat_and_save('./src', destination);
 
-fs.writeFileSync('./dass.js', fs.readFileSync('./dass.js'));
+fs.writeFileSync('./dass.js', fs.readFileSync(destination));
 
 function concat_and_save (filename, destination) {
 

@@ -2,12 +2,74 @@ body {
   font-family: 'Helvetica Neue', sans;
   background: #ffffff;
   color: #222;
-  margin: 2em auto;
+  margin: 1em;
   padding: 0 2em;
-  width: 48em;
   line-height: 1.5em;
   font-size: 16px;
   font-weight: 300;
+}
+
+.index {
+  height: 100%;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 24%;
+  overflow: auto;
+  margin: 0;
+  padding: 0.5em;
+  border-left: 1px solid #ccc;
+  background: white;
+}
+
+.index li {
+  list-style: none;
+}
+
+.index li a {
+  line-height: 2em;
+  border-bottom: 1px solid #ccc;
+  display: block;
+}
+
+.page {
+  width: 75%;
+  height: 100%;
+  overflow: auto;
+}
+
+.section {
+  clear: both;
+  overflow: hidden;
+  min-height: 5em;
+  position: relative;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+}
+
+.docs {
+  z-index: 1;
+  float: left;
+  width: 50%;
+}
+
+.code {
+  z-index: -1;
+  padding-top: 0.5em;
+  float: right;
+  width: 48%;
+  opacity: 0.1;
+}
+
+.code:hover {
+  z-index: 10;
+  opacity: 1;
+}
+
+.code pre {
+  height: 10em;
+  resize: vertical;
 }
 
 img {
@@ -16,7 +78,11 @@ img {
 }
 
 p {
-  margin: 1em 0;
+  width: 30em;
+  margin: 0.5em 0;
+}
+
+ul, ol {
 }
 
 a {
@@ -43,10 +109,12 @@ p img {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  clear: both;
   color: #003a6b;
   background-color: transparent;
-  margin: 1em 0;
+  margin: 0.5em 0;
   font-weight: normal;
+  white-space: nowrap;
 }
 
 h1 {
@@ -95,8 +163,7 @@ code {
 
 pre {
   overflow: auto;
-  height: 4em;
-  resize: vertical;
+  margin: 0.25em 0;
   font-family: "Menlo", monospace;
   background-color: #fff;
   padding: 0 0.5em 0.5em 0.5em;

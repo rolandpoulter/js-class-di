@@ -33,10 +33,11 @@ function parse_docs (source, md_destination, html_destination, options) {
 
 	var input = fs.readFileSync(source).toString(),
 			start = Date.now(),
-			output = '',
+			output,
 			segment,
 	    segments = [],
 	    next_block_comment = input.indexOf('/*!'),
+	    markdown_fragments = [],
 	    end_next_block_comment;
 
 	while (next_block_comment !== -1) {
@@ -63,12 +64,26 @@ function parse_docs (source, md_destination, html_destination, options) {
 
 	segments.forEach(function (segment) {
 
+		var markdown_fragment = {code: ''};
+
 		var docs = segment.docs;
 
 		docs = docs.replace(/^[\n\r]+/, '');
 		docs = docs.replace('/[\n\r]+$/', '');
 
-		output += segment.docs;
+		var name = docs.match(/^\#+\s*([^\n\r;\()]*)/m);
+
+		name = name && name[1] || '';
+
+		markdown_fragment.name = name;
+
+		markdown_fragment.id = name.replace(/[^A-Za-z0-9]/, '_');
+
+		segment.docs = docs;
+
+		markdown_fragment.docs = marked(docs);
+
+		markdown_fragments.push(markdown_fragment);
 
 		var code = segment.code;
 
@@ -77,19 +92,25 @@ function parse_docs (source, md_destination, html_destination, options) {
 
 		if (!/\S/.test(code)) return;
 
-		output += '```javascript' + segment.code + '```';
+		markdown_fragment.code = marked('```javascript' + segment.code + '```');
 
 	});
 
+	output = segments.map(function (markdown_fragment) {
+
+		return markdown_fragment.docs;
+
+	}).join('\n');
+
 	fs.writeFileSync(md_destination, output);
 
-	fs.writeFileSync(html_destination, html_docs(marked(output, null, options)));
+	fs.writeFileSync(html_destination, html_docs(markdown_fragments, null, options));
 
 	console.log('Documentation generated in ' + (Date.now() - start) + ' ms.');
 
 }
 
-function html_docs (markdown_fragment, template_name, options) {
+function html_docs (markdown_fragments, template_name, options) {
 
 	options = options || {};
 
@@ -97,7 +118,7 @@ function html_docs (markdown_fragment, template_name, options) {
 
 	template = fs.readFileSync(template_dir + '/' + template_name + '.mustache', 'utf-8');
 
-	options.content = markdown_fragment || options.input;
+	options.content = markdown_fragments || options.content;
 
 	options.title = options.title ? options.title : 'Docs';
 

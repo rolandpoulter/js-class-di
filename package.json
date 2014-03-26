@@ -1,6 +1,6 @@
 {
   "name": "dass",
-  "main": "./output.js",
+  "main": "./dass.js",
   "author": "rolandpoulter",
   "version": "0.0.0",
   "keywords": [],

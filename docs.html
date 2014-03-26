@@ -9,12 +9,74 @@
   font-family: 'Helvetica Neue', sans;
   background: #ffffff;
   color: #222;
-  margin: 2em auto;
+  margin: 1em;
   padding: 0 2em;
-  width: 48em;
   line-height: 1.5em;
   font-size: 16px;
   font-weight: 300;
+}
+
+.index {
+  height: 100%;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 24%;
+  overflow: auto;
+  margin: 0;
+  padding: 0.5em;
+  border-left: 1px solid #ccc;
+  background: white;
+}
+
+.index li {
+  list-style: none;
+}
+
+.index li a {
+  line-height: 2em;
+  border-bottom: 1px solid #ccc;
+  display: block;
+}
+
+.page {
+  width: 75%;
+  height: 100%;
+  overflow: auto;
+}
+
+.section {
+  clear: both;
+  overflow: hidden;
+  min-height: 5em;
+  position: relative;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+}
+
+.docs {
+  z-index: 1;
+  float: left;
+  width: 50%;
+}
+
+.code {
+  z-index: -1;
+  padding-top: 0.5em;
+  float: right;
+  width: 48%;
+  opacity: 0.1;
+}
+
+.code:hover {
+  z-index: 10;
+  opacity: 1;
+}
+
+.code pre {
+  height: 10em;
+  resize: vertical;
 }
 
 img {
@@ -23,7 +85,11 @@ img {
 }
 
 p {
-  margin: 1em 0;
+  width: 30em;
+  margin: 0.5em 0;
+}
+
+ul, ol {
 }
 
 a {
@@ -50,10 +116,12 @@ p img {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  clear: both;
   color: #003a6b;
   background-color: transparent;
-  margin: 1em 0;
+  margin: 0.5em 0;
   font-weight: normal;
+  white-space: nowrap;
 }
 
 h1 {
@@ -102,8 +170,7 @@ code {
 
 pre {
   overflow: auto;
-  height: 4em;
-  resize: vertical;
+  margin: 0.25em 0;
   font-family: "Menlo", monospace;
   background-color: #fff;
   padding: 0 0.5em 0.5em 0.5em;
@@ -152,7 +219,45 @@ th {
 	</style>
 </head>
 <body>
-<h1 id="new-class-definition-traits-">new Class(definition, traits...);</h1>
+	<ul class="index">
+			<li><a href="#new_Class">new Class</a></li>
+			<li><a href="#Class_version">Class.version</a></li>
+			<li><a href="#Class_construct">Class.construct</a></li>
+			<li><a href="#Class_helpers">Class.helpers</a></li>
+			<li><a href="#Class_helpers.eval_function">Class.helpers.eval_function</a></li>
+			<li><a href="#Class_helpers.get_class_constructor">Class.helpers.get_class_constructor</a></li>
+			<li><a href="#Class_helpers.get_object_class">Class.helpers.get_object_class</a></li>
+			<li><a href="#Class_helpers.get_dependencies">Class.helpers.get_dependencies</a></li>
+			<li><a href="#Class_helpers.get_super_class">Class.helpers.get_super_class</a></li>
+			<li><a href="#Class_helpers.get_traits">Class.helpers.get_traits</a></li>
+			<li><a href="#Class_helpers.namespace_upsert_constructor">Class.helpers.namespace_upsert_constructor</a></li>
+			<li><a href="#Class_helpers.new_error">Class.helpers.new_error</a></li>
+			<li><a href="#Class_helpers.parse_class_constructor_source">Class.helpers.parse_class_constructor_source</a></li>
+			<li><a href="#Class_helpers.spawn_constructor">Class.helpers.spawn_constructor</a></li>
+			<li><a href="#Class_helpers.spawn_prototype_constructor">Class.helpers.spawn_prototype_constructor</a></li>
+			<li><a href="#Class_instance">Class.instance</a></li>
+			<li><a href="#Class_instance.initialize">Class.instance.initialize</a></li>
+			<li><a href="#Class_instance.inject">Class.instance.inject</a></li>
+			<li><a href="#Class_get">Class.get</a></li>
+			<li><a href="#Class_register">Class.register</a></li>
+			<li><a href="#Class_set">Class.set</a></li>
+			<li><a href="#Class_prototype">Class.prototype</a></li>
+			<li><a href="#Class_prototype.create">Class.prototype.create</a></li>
+			<li><a href="#Class_prototype.decorate">Class.prototype.decorate</a></li>
+			<li><a href="#Class_prototype.define">Class.prototype.define</a></li>
+			<li><a href="#Class_prototype.derived">Class.prototype.derived</a></li>
+			<li><a href="#Class_prototype.extend">Class.prototype.extend</a></li>
+			<li><a href="#Class_prototype.include">Class.prototype.include</a></li>
+			<li><a href="#Class_prototype.inherits">Class.prototype.inherits</a></li>
+			<li><a href="#Class_prototype.initialize">Class.prototype.initialize</a></li>
+			<li><a href="#Class_prototype.install">Class.prototype.install</a></li>
+			<li><a href="#Class_prototype.toSouce">Class.prototype.toSouce</a></li>
+			<li><a href="#Class_prototype.toString">Class.prototype.toString</a></li>
+	</uL>
+	<div class="page">
+			<div class="section" id="new_Class">
+				<div class="docs">
+					<h1 id="new-class-definition-traits-">new Class(definition, traits...);</h1>
 <ol>
 <li>definition - String, Function, Object.</li>
 <li>traits... - String, Function, Object.</li>
@@ -161,7 +266,10 @@ th {
 Also has inheritance and depedency injection built in. Aims to be a lightweight, and simple implementation that
 can be easily monkey patched if need be.</p>
 <p>Returns a Function.</p>
-<pre><code class="lang-javascript"><span class="hljs-pi">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript"><span class="hljs-pi">
 "use strict"</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Class</span> <span class="hljs-params">()</span> {</span>
@@ -180,18 +288,34 @@ can be easily monkey patched if need be.</p>
     window.Class = window.Class || Class;
 }
 </code></pre>
-<h2 id="class-version-">Class.version;</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_version">
+				<div class="docs">
+					<h2 id="class-version-">Class.version;</h2>
 <p>Exposes the semantic version number. </p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.version = <span class="hljs-string">'0.0.1'</span>;
 </code></pre>
-<h2 id="class-construct-constructor-traits-">Class.construct(constructor, traits...);</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_construct">
+				<div class="docs">
+					<h2 id="class-construct-constructor-traits-">Class.construct(constructor, traits...);</h2>
 <ol>
 <li>constructor - String, Function, Object.</li>
 <li>traits... - String, Function, Object.</li>
 </ol>
 <p>Returns a Function.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.construct = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
     <span class="hljs-keyword">var</span> class_constructor = Class.helpers.get_class_constructor(<span class="hljs-keyword">this</span>);
@@ -220,21 +344,45 @@ Class.construct = <span class="hljs-function"><span class="hljs-keyword">functio
 
 };
 </code></pre>
-<h2 id="class-helpers-">Class.helpers;</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers">
+				<div class="docs">
+					<h2 id="class-helpers-">Class.helpers;</h2>
 <p>A home for helper methods that do not need to be class or instance methods.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers = {};
 </code></pre>
-<h3 id="class-helpers-eval_function-name-args-body-">Class.helpers.eval_function(name, args, body);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.eval_function">
+				<div class="docs">
+					<h3 id="class-helpers-eval_function-name-args-body-">Class.helpers.eval_function(name, args, body);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.eval_function = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, args, body)</span> {</span>
 
     <span class="hljs-keyword">return</span> ((<span class="hljs-string">'indirect'</span>, <span class="hljs-built_in">eval</span>)(<span class="hljs-string">'(function '</span> + name + <span class="hljs-string">'('</span> + args + <span class="hljs-string">'){'</span> + body + <span class="hljs-string">'})'</span>));
 
 };
 </code></pre>
-<h3 id="class-helpers-get_class_constructor-object-">Class.helpers.get_class_constructor(object);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.get_class_constructor">
+				<div class="docs">
+					<h3 id="class-helpers-get_class_constructor-object-">Class.helpers.get_class_constructor(object);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.get_class_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
     <span class="hljs-keyword">return</span> (
@@ -247,8 +395,16 @@ Class.helpers.get_class_constructor = <span class="hljs-function"><span class="h
 Class.class_constructor =
 Class.prototype.class_constructor = Class;
 </code></pre>
-<h3 id="class-helpers-get_object_class-class_constructor-">Class.helpers.get_object_class(class_constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.get_object_class">
+				<div class="docs">
+					<h3 id="class-helpers-get_object_class-class_constructor-">Class.helpers.get_object_class(class_constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.get_class_namespace = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor)</span> {</span>
 
     class_constructor = Class.helpers.get_class_constructor(class_constructor);
@@ -261,8 +417,16 @@ Class.helpers.get_class_namespace = <span class="hljs-function"><span class="hlj
 
 };
 </code></pre>
-<h3 id="class-helpers-get_dependencies-object-">Class.helpers.get_dependencies(object);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.get_dependencies">
+				<div class="docs">
+					<h3 id="class-helpers-get_dependencies-object-">Class.helpers.get_dependencies(object);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.get_dependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
     <span class="hljs-keyword">if</span> (!object.dependencies) {
@@ -273,8 +437,16 @@ Class.helpers.get_dependencies = <span class="hljs-function"><span class="hljs-k
 
 };
 </code></pre>
-<h3 id="class-helpers-get_super_class-constructor-">Class.helpers.get_super_class(constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.get_super_class">
+				<div class="docs">
+					<h3 id="class-helpers-get_super_class-constructor-">Class.helpers.get_super_class(constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.get_super_class = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
     <span class="hljs-keyword">if</span> (!constructor.prototype) {
@@ -285,8 +457,16 @@ Class.helpers.get_super_class = <span class="hljs-function"><span class="hljs-ke
 
 };
 </code></pre>
-<h3 id="class-helpers-get_traits-constructor-">Class.helpers.get_traits(constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.get_traits">
+				<div class="docs">
+					<h3 id="class-helpers-get_traits-constructor-">Class.helpers.get_traits(constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.get_traits = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
     <span class="hljs-keyword">if</span> (!constructor.prototype) {
@@ -305,8 +485,16 @@ Class.helpers.get_traits = <span class="hljs-function"><span class="hljs-keyword
 
 };
 </code></pre>
-<h3 id="class-helpers-namespace_upsert_constructor-class_constructor-constructor-">Class.helpers.namespace_upsert_constructor(class_constructor, constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.namespace_upsert_constructor">
+				<div class="docs">
+					<h3 id="class-helpers-namespace_upsert_constructor-class_constructor-constructor-">Class.helpers.namespace_upsert_constructor(class_constructor, constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.namespace_upsert_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor)</span> {</span>
 
     <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(class_constructor);
@@ -323,8 +511,16 @@ Class.helpers.namespace_upsert_constructor = <span class="hljs-function"><span c
 
 }
 </code></pre>
-<h3 id="class-helpers-new_error-error_message-">Class.helpers.new_error(error_message);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.new_error">
+				<div class="docs">
+					<h3 id="class-helpers-new_error-error_message-">Class.helpers.new_error(error_message);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.new_error = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor, error_message)</span> {</span>
 
     <span class="hljs-keyword">var</span> class_constructor = Class.helpers.get_class_constructor(constructor);
@@ -339,8 +535,16 @@ Class.helpers.new_error = <span class="hljs-function"><span class="hljs-keyword"
 
 };
 </code></pre>
-<h3 id="class-helpers-parse_class_constructor_source-class_constructor-">Class.helpers.parse_class_constructor_source(class_constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.parse_class_constructor_source">
+				<div class="docs">
+					<h3 id="class-helpers-parse_class_constructor_source-class_constructor-">Class.helpers.parse_class_constructor_source(class_constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.parse_class_constructor_source = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor)</span> {</span>
 
     <span class="hljs-keyword">var</span> source;
@@ -365,8 +569,16 @@ Class.helpers.parse_class_constructor_source = <span class="hljs-function"><span
 
 };
 </code></pre>
-<h3 id="class-helpers-spawn_constructor-class_constructor-constructor_name-">Class.helpers.spawn_constructor(class_constructor, constructor_name);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.spawn_constructor">
+				<div class="docs">
+					<h3 id="class-helpers-spawn_constructor-class_constructor-constructor_name-">Class.helpers.spawn_constructor(class_constructor, constructor_name);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.spawn_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor_name)</span> {</span>
 
     Class.helpers.parse_class_constructor_source(class_constructor);
@@ -379,8 +591,16 @@ Class.helpers.spawn_constructor = <span class="hljs-function"><span class="hljs-
 
 };
 </code></pre>
-<h3 id="class-helpers-spawn_prototype_constructor-class_constructor-constructor_prototype-">Class.helpers.spawn_prototype_constructor(class_constructor, constructor_prototype);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_helpers.spawn_prototype_constructor">
+				<div class="docs">
+					<h3 id="class-helpers-spawn_prototype_constructor-class_constructor-constructor_prototype-">Class.helpers.spawn_prototype_constructor(class_constructor, constructor_prototype);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.helpers.spawn_prototype_constructor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(class_constructor, constructor_prototype)</span> {</span>
 
     <span class="hljs-keyword">var</span> constructor = constructor_prototype.constructor;
@@ -395,21 +615,45 @@ Class.helpers.spawn_prototype_constructor = <span class="hljs-function"><span cl
 
 };
 </code></pre>
-<h2 id="class-instance-">Class.instance;</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_instance">
+				<div class="docs">
+					<h2 id="class-instance-">Class.instance;</h2>
 <p>New classes start with Class.instance as a trait. This provides default instance methods for new classes.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.instance = {};
 </code></pre>
-<h3 id="class-instance-initialize-">Class.instance.initialize();</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_instance.initialize">
+				<div class="docs">
+					<h3 id="class-instance-initialize-">Class.instance.initialize();</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.instance.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
 };
 </code></pre>
-<h3 id="class-instance-inject-overrides-context-">Class.instance.inject(overrides?, context?);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_instance.inject">
+				<div class="docs">
+					<h3 id="class-instance-inject-overrides-context-">Class.instance.inject(overrides?, context?);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.inject =
 Class.prototype.inject =
 Class.instance.inject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(overrides, context)</span> {</span>
@@ -443,8 +687,16 @@ Class.instance.inject = <span class="hljs-function"><span class="hljs-keyword">f
 
 };
 </code></pre>
-<h2 id="class-get-name-">Class.get(name);</h2>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_get">
+				<div class="docs">
+					<h2 id="class-get-name-">Class.get(name);</h2>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.get = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
 
     <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
@@ -453,13 +705,21 @@ Class.get = <span class="hljs-function"><span class="hljs-keyword">function</spa
 
 };
 </code></pre>
-<h2 id="class-register-constructor-">Class.register(constructor);</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_register">
+				<div class="docs">
+					<h2 id="class-register-constructor-">Class.register(constructor);</h2>
 <ol>
 <li>constructor - String, Function, Object.</li>
 </ol>
 <p>Creates a new constructor function with a name and stores it in a namespace.</p>
 <p>Returns a Function.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.register = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
     <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
@@ -494,8 +754,16 @@ Class.register = <span class="hljs-function"><span class="hljs-keyword">function
 
 };
 </code></pre>
-<h2 id="class-set-name-value-">Class.set(name, value);</h2>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_set">
+				<div class="docs">
+					<h2 id="class-set-name-value-">Class.set(name, value);</h2>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.set = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, value)</span> {</span>
 
     <span class="hljs-keyword">var</span> namespace = Class.helpers.get_class_namespace(<span class="hljs-keyword">this</span>);
@@ -504,12 +772,25 @@ Class.set = <span class="hljs-function"><span class="hljs-keyword">function</spa
 
 };
 </code></pre>
-<h2 id="class-prototype-">Class.prototype;</h2>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype">
+				<div class="docs">
+					<h2 id="class-prototype-">Class.prototype;</h2>
 <p>Properties are copied from Class.prototype and given to new classes.
 This is necessary because it is currently not possible to use Object.create()
 on a Function. </p>
-<h3 id="class-prototype-create-object-constructor-">Class.prototype.create(object, constructor);</h3>
-<pre><code class="lang-javascript">
+
+				</div>
+			</div>
+			<div class="section" id="Class_prototype.create">
+				<div class="docs">
+					<h3 id="class-prototype-create-object-constructor-">Class.prototype.create(object, constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.create =
 Class.prototype.create = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, constructor)</span> {</span>
 
@@ -527,8 +808,16 @@ Class.prototype.create = <span class="hljs-function"><span class="hljs-keyword">
 
 };
 </code></pre>
-<h3 id="class-prototype-decorate-trait-">Class.prototype.decorate(trait);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.decorate">
+				<div class="docs">
+					<h3 id="class-prototype-decorate-trait-">Class.prototype.decorate(trait);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.decorate =
 Class.prototype.decorate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(trait)</span> {</span>
 
@@ -569,8 +858,16 @@ Class.prototype.decorate = <span class="hljs-function"><span class="hljs-keyword
 
 };
 </code></pre>
-<h3 id="class-prototype-define-name-value-context-">Class.prototype.define(name, value, context);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.define">
+				<div class="docs">
+					<h3 id="class-prototype-define-name-value-context-">Class.prototype.define(name, value, context);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.define =
 Class.prototype.define = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, value, context)</span> {</span>
 
@@ -588,6 +885,8 @@ Class.prototype.define = <span class="hljs-function"><span class="hljs-keyword">
         <span class="hljs-keyword">else</span> {
             push_dependency(value);
         }
+
+        <span class="hljs-keyword">return</span>;
     }
 
     <span class="hljs-keyword">return</span> context[name] = value;
@@ -602,14 +901,22 @@ Class.prototype.define = <span class="hljs-function"><span class="hljs-keyword">
 
 };
 </code></pre>
-<h3 id="class-prototype-derived-object-">Class.prototype.derived(object);</h3>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.derived">
+				<div class="docs">
+					<h3 id="class-prototype-derived-object-">Class.prototype.derived(object);</h3>
 <ol>
 <li>object - Object.</li>
 </ol>
 <p>Checks if an object is an instance of the this class, or if this class
 is a trait of the object and therefore helped in its composition.</p>
 <p>Returns a Boolean.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.derived =
 Class.prototype.derived = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> {</span>
 
@@ -647,8 +954,16 @@ Class.prototype.derived = <span class="hljs-function"><span class="hljs-keyword"
 
 };
 </code></pre>
-<h3 id="class-prototype-extend-constructor-">Class.prototype.extend(constructor);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.extend">
+				<div class="docs">
+					<h3 id="class-prototype-extend-constructor-">Class.prototype.extend(constructor);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.extend =
 Class.prototype.extend = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(constructor)</span> {</span>
 
@@ -664,8 +979,16 @@ Class.prototype.extend = <span class="hljs-function"><span class="hljs-keyword">
 
 };
 </code></pre>
-<h3 id="class-prototype-include-derivatices-">Class.prototype.include(derivatices...);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.include">
+				<div class="docs">
+					<h3 id="class-prototype-include-derivatices-">Class.prototype.include(derivatices...);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.include =
 Class.prototype.include = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
@@ -677,8 +1000,16 @@ Class.prototype.include = <span class="hljs-function"><span class="hljs-keyword"
 
 };
 </code></pre>
-<h3 id="class-prototype-inherits-super_class-">Class.prototype.inherits(super_class);</h3>
-<pre><code class="lang-javascript">
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.inherits">
+				<div class="docs">
+					<h3 id="class-prototype-inherits-super_class-">Class.prototype.inherits(super_class);</h3>
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.prototype.inherits = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(super_class)</span> {</span>
 
     <span class="hljs-comment">// TODO: allow Class or decendants to be a super_class.</span>
@@ -722,13 +1053,21 @@ Class.prototype.inherits = <span class="hljs-function"><span class="hljs-keyword
 
 };
 </code></pre>
-<h3 id="class-prototype-initialize-definition-traits-">Class.prototype.initialize(definition, traits...);</h3>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.initialize">
+				<div class="docs">
+					<h3 id="class-prototype-initialize-definition-traits-">Class.prototype.initialize(definition, traits...);</h3>
 <ol>
 <li>definition - String, Function, Object.</li>
 <li>traits... - String, Function, Object.</li>
 </ol>
 <p>Returns a Function.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.initialize =
 Class.prototype.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
@@ -736,14 +1075,22 @@ Class.prototype.initialize = <span class="hljs-function"><span class="hljs-keywo
 
 };
 </code></pre>
-<h3 id="class-prototype-install-object-trait-">Class.prototype.install(object, trait);</h3>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.install">
+				<div class="docs">
+					<h3 id="class-prototype-install-object-trait-">Class.prototype.install(object, trait);</h3>
 <ol>
 <li>object - any Object.</li>
 <li>trait - String | Function | Object.</li>
 </ol>
 <p>Gives an object a trait.</p>
 <p>Returns this Function - class constructor.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.install =
 Class.prototype.install = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, trait)</span> {</span>
 
@@ -786,9 +1133,17 @@ Class.prototype.install = <span class="hljs-function"><span class="hljs-keyword"
 
 };
 </code></pre>
-<h3 id="class-prototype-tosouce-">Class.prototype.toSouce();</h3>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.toSouce">
+				<div class="docs">
+					<h3 id="class-prototype-tosouce-">Class.prototype.toSouce();</h3>
 <p>Returns a String - the raw source of the constructor function.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 <span class="hljs-keyword">if</span> (!Class.prototype.toSource) {
     Class.toSource =
     Class.prototype.toSource =
@@ -796,9 +1151,17 @@ Class.prototype.install = <span class="hljs-function"><span class="hljs-keyword"
         <span class="hljs-built_in">Function</span>.prototype.toString;
 }
 </code></pre>
-<h3 id="class-prototype-tostring-">Class.prototype.toString();</h3>
+
+					</div>
+			</div>
+			<div class="section" id="Class_prototype.toString">
+				<div class="docs">
+					<h3 id="class-prototype-tostring-">Class.prototype.toString();</h3>
 <p>Returns a String - the name of the class.</p>
-<pre><code class="lang-javascript">
+
+				</div>
+					<div class="code">
+						<pre><code class="lang-javascript">
 Class.toString =
 Class.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
@@ -807,5 +1170,8 @@ Class.prototype.toString = <span class="hljs-function"><span class="hljs-keyword
 };
 </code></pre>
 
+					</div>
+			</div>
+	</div>
 </body>
 </html>

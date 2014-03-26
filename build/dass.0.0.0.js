@@ -491,6 +491,8 @@ Class.prototype.define = function (name, value, context) {
 		else {
 			push_dependency(value);
 		}
+
+		return;
 	}
 
 	return context[name] = value;
